@@ -1,0 +1,19 @@
+---
+title: "Project 1 - Group E - JSON"
+author: "Kristin Calvert"
+date: "6/5/2019"
+output: html_document
+---
+
+```{r setup, include=FALSE, warning=FALSE, message=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(jsonlite)
+```
+
+Test read data frame from [CORGIS Dataset Project](https://think.cs.vt.edu/corgis/json/county_crime/county_crime.html)
+
+```{r readDS}
+county_crime <- fromJSON("https://think.cs.vt.edu/corgis/json/county_crime/county_crime.json")
+
+```
+
