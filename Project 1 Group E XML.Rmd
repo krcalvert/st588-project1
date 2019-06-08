@@ -14,6 +14,7 @@ knitr::opts_chunk$set(echo = TRUE)
 library(xml2)
 library(tidyverse)
 library(dplyr)
+
 ```
 
 ```{r}
@@ -24,5 +25,27 @@ records <- xml_find_all(xml, "//record")
 
 text <- xml_text(records)
 text <- str_remove_all(text, "[\n]")
+text <- text[-c(201:208)]
+
+
+getTable <- function(x){
+
+  split <- strsplit(x[1:200], " ")
+  
+  split.df <- data.frame(matrix(unlist(split), nrow = length(split), byrow = TRUE),                   stringsAsFactors = FALSE)
+  
+  split.tbl <- tbl_df(split.df)
+  
+  a <- split.tbl %>% rename(Species = X1, Sex = X2, Index = X3, "Frontal Lip" = X4,
+                     "Rear Width" = X5, "Carapace Length" = X6, "Carapace Width" = X7,                       "Body Depth" = X8) %>% mutate(Species = as.factor(Species), 
+                     Sex = as.factor(Sex)) %>% mutate_if(is.character, as.numeric) %>%
+                     mutate(Species = recode(Species, "0" = "Blue",  "1" = "Orange")) %>%  mutate(Sex = recode(Sex, "0" = "Male", "1" = "Female"))
+  
+  return(a)
+
+}
+
+crab.table <- getTable(text)
+crab.table
 
 ```
