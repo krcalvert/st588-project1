@@ -2,7 +2,8 @@
 title: "Project 1 - Group E - JSON"
 author: "Kristin Calvert"
 date: "6/5/2019"
-output: html_document
+output: html_document:
+    toc:  TRUE
 ---
 
 ```{r setup, include=FALSE, warning=FALSE, message=FALSE}
@@ -10,10 +11,48 @@ knitr::opts_chunk$set(echo = TRUE)
 library(jsonlite)
 ```
 
-Test read data frame from [CORGIS Dataset Project](https://think.cs.vt.edu/corgis/json/county_crime/county_crime.html)
+# Project 1 - Group # - JSON
+
+## JSON Data
+
+http://www.json.org/xml.html
+https://link-springer-com.prox.lib.ncsu.edu/chapter/10.1007/978-1-4842-1916-4_7
+
+
+## Packages for JSON data
+
+JSONlite
+
+## CORGIS Crime Dataset
+
+We have selected to use the County Crime dataset available from [CORGIS Dataset Project](https://think.cs.vt.edu/corgis/json/county_crime/county_crime.html). CORGIS is a project out of Virginia Tech to provide clean, simple to use datasets for people learning to code. They provide data across a number of subject areas and in a variety of common data formats. 
+
+The County Crime dataset originates from the Unified Crime Reporting Statistics coming out of U.S. Justice Department and the Federal Bureau of Investigations. The data include crime rates by county in the United States. The data are broken down into categories which broadly fall under either property or violent crime designations. Data are reported from "city law enforcement agencies 10,000 and over in population and county law enforcement agencies 25,000 and over in population." !https://www.ucrdatatool.gov/faq.cfm Geographic data come from the U.S. Census Bureau.
+
+The data include two character variables:
++ Department: the law enforment agency providing the data
++ State: the U.S. state where the department is located.
+
+and 20 numeric variables. The numeric variables are structured as data frames within the larger data set.
++ Violent crime rates: in 5 categories
+  - All
+  - Murder
+  - Rape
+  - Robbery
+  - Assault
++ Property crime rates: in 4 categories
+  - Burglary
+  - Larceny
+  - All
+  - Motor
++ Violent crime total offenses: in 5 categories (same as above)
++ Property crime total offenses: in 4 categories (same as above)
++ Year: the reporting year for the data
 
 ```{r readDS}
 county_crime <- fromJSON("https://think.cs.vt.edu/corgis/json/county_crime/county_crime.json")
 
 ```
 
+
+## Data Analysis
