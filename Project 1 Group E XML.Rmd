@@ -9,4 +9,20 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-Testing
+```{r libraries, message = FALSE, warning = FALSE}
+
+library(xml2)
+library(tidyverse)
+library(dplyr)
+```
+
+```{r}
+
+xml <- read_xml("http://www.ggobi.org/book/data/australian-crabs.xml")
+
+records <- xml_find_all(xml, "//record")
+
+text <- xml_text(records)
+text <- str_remove_all(text, "[\n]")
+
+```
