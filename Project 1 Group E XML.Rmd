@@ -2,7 +2,9 @@
 title: "Project 1 Goup E XML"
 author: "Phillip Rodriguez-Lebron & Adam Weimerskirch"
 date: "6/8/2019"
-output: html_document
+output:
+  html_document:
+    toc: TRUE
 ---
 
 ```{r setup, include=FALSE}
@@ -20,6 +22,10 @@ library(DT)
 library(GGally)
 
 ```
+
+# Crab Measurement Data
+
+## Data Table
 
 ```{r dataset table}
 
@@ -76,30 +82,28 @@ crab.table <- crab.table %>%
          BDGroup = sizeGroups(crab.table$`Body Depth`))
 ```
 
+## Contingency Tables
+
 ```{r contingency table}
 
-small <- quantile(crab.table$`Body Depth`, 0.25)
-large <- quantile(crab.table$`Body Depth`, 0.75)
+table(crab.table$Sex, crab.table$Species) %>% kable(caption = "The Sex of Crabs by Species") %>% kable_styling()
 
-getBodyDepth <- function(x){
-  
-  ifelse(x < small, "Small", ifelse((x >= small) & (x <= large), "Medium", "Large"))
-  
-}
-
-change <- crab.table %>% mutate(`Body Depth` = getBodyDepth(`Body Depth`))
-
-table(change$Sex, change$`Body Depth`) %>% kable(caption = "The Sex of Crabs by Body Depth") %>% kable_styling()
+table(crab.table$Sex, crab.table$BDGroup) %>% kable(caption = "The Sex of Crabs by Body Depth") %>% kable_styling()
 
 ```
 
-The barplot below shows that this dataset contains `n = 50` crabs in each Sex-Species group.
+## Plots
+
+### One Variable Plots
+
+The barplots below are visual depictions of the contingency tables.
 
 ```{r bar}
 g <- ggplot(crab.table)
 
 #barplot
 g + geom_bar(aes(x = Species, fill = Sex))
+g + geom_bar(aes(x = Sex, fill = BDGroup))
 ```
 
 The boxplot below shows that the Orange species is has a larger body depth than the the Blue species, for both males and females. 
@@ -110,6 +114,8 @@ g <- ggplot(crab.table)
 #boxplot
 g + geom_boxplot(aes(y = `Body Depth`, fill = Sex)) + facet_grid( ~ Species)
 ```
+
+### Two Variable Plots
 
 The scatterplot below shows that carapace width and length have a strong positive correlation, regardless of sex or species.
 
