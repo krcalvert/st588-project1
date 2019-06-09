@@ -1,6 +1,6 @@
 ---
 title: "Project 1 Goup E XML"
-author: "Phillip Rodriguez-Lebron"
+author: "Phillip Rodriguez-Lebron & Adam Weimerskirch"
 date: "6/8/2019"
 output: html_document
 ---
@@ -17,6 +17,7 @@ library(dplyr)
 library(knitr)
 library(kableExtra)
 library(DT)
+library(GGally)
 
 ```
 
@@ -54,6 +55,27 @@ datatable(crab.table)
 
 ```
 
+```{r sizeGroups}
+
+sizeGroups <- function(x){
+  if(!is.vector(x)){
+    stop("Please provide vector to classify into groups")
+  }
+  
+  small <- quantile(x, 0.25)
+  large <- quantile(x, 0.75)
+  
+  ifelse(x < small, "Small", ifelse((x >= small) & (x <= large), "Medium", "Large"))
+}
+
+crab.table <- crab.table %>%
+  mutate(FLGroup = sizeGroups(crab.table$`Frontal Lip`),
+         RWGroup = sizeGroups(crab.table$`Rear Width`),
+         CLGroup = sizeGroups(crab.table$`Carapace Length`),
+         CWGroup = sizeGroups(crab.table$`Carapace Width`),
+         BDGroup = sizeGroups(crab.table$`Body Depth`))
+```
+
 ```{r contingency table}
 
 small <- quantile(crab.table$`Body Depth`, 0.25)
@@ -68,5 +90,41 @@ getBodyDepth <- function(x){
 change <- crab.table %>% mutate(`Body Depth` = getBodyDepth(`Body Depth`))
 
 table(change$Sex, change$`Body Depth`) %>% kable(caption = "The Sex of Crabs by Body Depth") %>% kable_styling()
+
+```
+
+The barplot below shows that this dataset contains `n = 50` crabs in each Sex-Species group.
+
+```{r bar}
+g <- ggplot(crab.table)
+
+#barplot
+g + geom_bar(aes(x = Species, fill = Sex))
+```
+
+The boxplot below shows that the Orange species is has a larger body depth than the the Blue species, for both males and females. 
+
+```{r box}
+g <- ggplot(crab.table)
+
+#boxplot
+g + geom_boxplot(aes(y = `Body Depth`, fill = Sex)) + facet_grid( ~ Species)
+```
+
+The scatterplot below shows that carapace width and length have a strong positive correlation, regardless of sex or species.
+
+```{r scatter}
+g <- ggplot(crab.table)
+
+#scatterplot
+g + geom_point(aes(x = `Carapace Width`, y = `Carapace Length`)) + 
+  facet_grid(Sex ~ Species)
+```
+
+The pairs plot below shows that each the size measurements for the crabs are positively correlated with the others.  That is, as one dimension of the crab grows, each other dimension tends to grow as well.
+
+```{r pairs}
+#scatterplot pairs
+ggpairs(crab.table, columns = 4:8)
 
 ```
