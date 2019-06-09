@@ -6,7 +6,7 @@ output: html_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r libraries, message = FALSE, warning = FALSE}
@@ -14,10 +14,12 @@ knitr::opts_chunk$set(echo = TRUE)
 library(xml2)
 library(tidyverse)
 library(dplyr)
+library(knitr)
+library(kableExtra)
 
 ```
 
-```{r}
+```{r dataset table}
 
 xml <- read_xml("http://www.ggobi.org/book/data/australian-crabs.xml")
 
@@ -46,6 +48,22 @@ getTable <- function(x){
 }
 
 crab.table <- getTable(text)
-crab.table
+
+```
+
+```{r contingency table}
+
+small <- quantile(crab.table$`Body Depth`, 0.25)
+large <- quantile(crab.table$`Body Depth`, 0.75)
+
+getBodyDepth <- function(x){
+  
+  ifelse(x < small, "Small", ifelse((x >= small) & (x <= large), "Medium", "Large"))
+  
+}
+
+change <- crab.table %>% mutate(`Body Depth` = getBodyDepth(`Body Depth`))
+
+table(change$Sex, change$`Body Depth`) %>% kable(caption = "The Sex of Crabs by Body Depth") %>% kable_styling()
 
 ```
