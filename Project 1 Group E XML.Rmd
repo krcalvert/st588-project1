@@ -16,6 +16,7 @@ library(tidyverse)
 library(dplyr)
 library(knitr)
 library(kableExtra)
+library(DT)
 
 ```
 
@@ -48,6 +49,8 @@ getTable <- function(x){
 }
 
 crab.table <- getTable(text)
+
+datatable(crab.table)
 
 ```
 
