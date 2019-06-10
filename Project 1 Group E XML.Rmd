@@ -23,6 +23,64 @@ library(GGally)
 
 ```
 
+# XML
+
+## What does XML stand for?
+
+XML stands for extensible markup language?
+
+## What is XML data?
+
+Essentially XML data is a document that stores data in what is known as an XML tree structure. The tree structure consists of an element called a root element, child elements, and sub-child elements. These terms are used to describe the structure and the relationship between the elements. The root element contains the child elements, and the child elements contain the sub-child elements. All XML documents must contain one root element that acts as the parent of all of the elements. 
+
+Example: 
+
+<theater>
+  <movie category = "Crime">
+    <title>Goodfellas</title>
+    <director><Martin Scorsese</director>
+    <date>1990</date>
+  </movie>
+  <movie category = "Horror">
+    <title>Halloween</title>
+    <director>John Carpenter</director>
+    <date>1978</date>
+  </movie>
+</theater>
+
+In this example <theater> is the root element, <movie> is the child element, and <title>, <director>, and <date> are the sub-child elements. As you can see all elements are enclosed in <> brackets and must be ended with a forward slash </> within the bracket to close the element.  
+
+## Where does XML get used?
+
+XML is used in a wide variety of IT systems including but not limited to computers, software, and programming languages. It is often used in the distribution of data over the internet.  
+
+## Why is it a good way to store data?
+
+There are many reasons why XML is a good way to store data. First of all XML is readable by humans and machines which makes it highly functional. Secondly, XML stores all of the information about the data that may be of use to the one receiving it. And although there are pre-set element names, the user has the freedom to assign user defined names which makes it very customizable.  
+
+# Packages
+
+The main package that was used to work with the XML data was `xml2`. The two functions within `xml2` that were essential in parsing through the data were `xml_find_all` and `xml_text`. The function `xml_find_all` was used to make a list of the nodesets. The function `xml_text` was used to isolate the text within the list of the noedsets. These functions made it possible to parse through the elements of the data.  
+
+# Data
+
+## Source
+
+The XML file was from [GGobi.org](http://www.ggobi.org/book/). From the introduction on its website GGobi "is an open source visualization program for exploring high-dimensional data". The XML file was taken from the data section on the GGobi text book page.  
+
+The original source of the dataset is:
+
+Campbell, N. A. & Mahon, R. J. (1974), A Multivariate Study of Variation in Two Species of Rock Crab of genus Leptograpsus, Australian Journal of Zoology 22, 417–425.
+
+## Description
+
+The data consists of measurements of rock crabs that were collected in Freemantle, Australia. Each rock crab was adminitered five measurements, and the species and color of each were noted.
+
+## Variables
+
+The dataset contains eight variables and 200 observations. The variables are species (orange/blue), sex (male/female),  index (observations 1-200), frontal lip length, rear width, carapace length, carapace width, and body depth. All measurements are in millimeters.
+
+
 # Crab Measurement Data
 
 ## Data Table
