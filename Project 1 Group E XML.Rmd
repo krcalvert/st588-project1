@@ -86,9 +86,13 @@ crab.table <- crab.table %>%
 
 ```{r contingency table}
 
-table(crab.table$Sex, crab.table$Species) %>% kable(caption = "The Sex of Crabs by Species") %>% kable_styling()
+table(crab.table$Sex, crab.table$Species) %>% kable(caption = "Sex and Species of Crabs") %>% kable_styling()
 
-table(crab.table$Sex, crab.table$BDGroup) %>% kable(caption = "The Sex of Crabs by Body Depth") %>% kable_styling()
+table(crab.table$Sex, crab.table$BDGroup) %>% kable(caption = "The Body Depth of Crabs by Sex") %>% kable_styling()
+
+table(crab.table$Species, crab.table$BDGroup) %>% kable(caption = "The Body Depth of Crabs by Species") %>% kable_styling()
+
+table(crab.table$RWGroup, crab.table$FLGroup) %>% kable(caption = "The Frontal Lip of Crabs by Rear Width") %>% kable_styling()
 
 ```
 
@@ -96,7 +100,7 @@ table(crab.table$Sex, crab.table$BDGroup) %>% kable(caption = "The Sex of Crabs 
 
 ### One Variable Plots
 
-The barplots below are visual depictions of the contingency tables.
+The barplots below are visual depictions of the first two contingency tables.
 
 ```{r bar}
 g <- ggplot(crab.table)
@@ -129,8 +133,18 @@ g + geom_point(aes(x = `Carapace Width`, y = `Carapace Length`)) +
 
 The pairs plot below shows that each the size measurements for the crabs are positively correlated with the others.  That is, as one dimension of the crab grows, each other dimension tends to grow as well.
 
-```{r pairs}
+```{r pairs, message = FALSE}
 #scatterplot pairs
 ggpairs(crab.table, columns = 4:8)
 
+```
+
+From these plots, it appears that the width variables have a bimodal distribution as the crabs increase in size.  It seems likely that a categorical variable (possibly species or sex) plays a role in this relationship.  It would be interesting to do some linear modelling with this dataset to see which variables are most predictive those width variables.
+
+```{r density}
+g <- ggplot(crab.table)
+
+#densities of width variables
+g + geom_density(aes(x = `Rear Width`)) +
+  facet_grid(Sex ~ Species)
 ```
