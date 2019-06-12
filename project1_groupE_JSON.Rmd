@@ -1,6 +1,6 @@
 ---
 title: "Project 1 - Group E - JSON"
-author: "Kristin Calvert"
+author: "Kristin Calvert and Xingyue Gong"
 date: "6/5/2019"
 output: html_document:
     toc:  TRUE
@@ -68,12 +68,11 @@ References:
 
 ## Packages for JSON data
 
-rjson
+There are three packages for importing JSON data into R: [rjson](https://cran.r-project.org/web/packages/rjson/index.html), [rjsonio](https://cran.r-project.org/web/packages/RJSONIO/index.html), and [jsonite](https://cran.r-project.org/web/packages/jsonlite/index.html).
 
-rjsonio
+The packages function similarly; however, there are differences in how the parse the data, indicate missing values, and contain options for controlling how data is presented or simplified. `rjson` has fewer options for the latter. 
 
-JSONlite
-
+We have selected `jsonlite` for this project. The data set we will use for the analysis has nested data frames. This package allows us to flatten the data into a non-nested data frame.
 
 
 ## CORGIS Crime Dataset
@@ -103,7 +102,7 @@ and 20 numeric variables. The numeric variables are structured as data frames wi
 + Year: the reporting year for the data
 
 ```{r readDS}
-county_crime <- fromJSON("https://think.cs.vt.edu/corgis/json/county_crime/county_crime.json")
+county_crime <- fromJSON("https://think.cs.vt.edu/corgis/json/county_crime/county_crime.json", flatten = TRUE)
 
 ```
 
