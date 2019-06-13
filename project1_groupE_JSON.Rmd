@@ -2,7 +2,8 @@
 title: "Project 1 - Group E - JSON"
 author: "Kristin Calvert and Xingyue Gong"
 date: "6/5/2019"
-output: html_document:
+output: 
+  html_document:
     toc:  TRUE
 ---
 
@@ -25,9 +26,11 @@ It is "less verbose" than XML.^2^ Where XML allows for data and metadata and com
 
 The JSON data format denotes an object as a comma-separated list of properties contained within braces. JSON supports six types of values: number, string, Boolean, array, object, `NULL`. Whitespace is ignored between elements.^1^
 
-### Sample JSON Object^3^ 
+### Sample JSON Object
 
-```{r JSONsample echo=TRUE, eval=FALSE}
+Sample Object^3^ 
+
+```{r JSONsample, echo=TRUE, eval=FALSE}
     "actor": {
       "name": "Tom Cruise",
       "age": 56,
@@ -37,7 +40,7 @@ The JSON data format denotes an object as a comma-separated list of properties c
     }
 ```
 
-## Why is it good for storing data?^4^
+## Why is it good for storing data?
 
 *Speed*
 JSON is a pure data format designed for transmission. It is compact; the absence of metadata, schema, or other information make JSON faster to parse compared to XML or other languages because JSON uses less data overall. 
@@ -46,23 +49,26 @@ JSON is a pure data format designed for transmission. It is compact; the absence
 Requires additional validation as small mistakes in coding commas or parenthes cause issues. Lacks schema. Less flexible, which simplifies code.^1^ 
 
 *Compatibility*
-JSON is language neutral. Additionally, it uses conventions familiar to other programming languages. It easily integrated in web resources, especially JavaScript. Many notable public APIs use JSON. 
+JSON is language neutral. Additionally, it uses conventions familiar to other programming languages. It easily integrated in web resources, especially JavaScript. Many notable public APIs use JSON.^4^ 
 
-### APIs supporting JSON^5^
+### APIs supporting JSON
 
-Data format | API
+Data format | API^5^
 -------------|----------------
 JSON only | Facebook Graph API, Google Maps API, Twitter API, AccuWeather API, Pinterest API, Reddit API, Foursquare API
--------------|-----------------
 JSON and XML | Google Cloud Storage, Linkedin API, Flickr API
 
 
 References:
 
 ^1^ [JSON.org](http://www.json.org/). Accessed 2019-06-12
+
 ^2^ [Friesen J. (2016) Introducing JSON. In: Java XML and JSON. Apress, Berkeley, CA](https://link-springer-com.prox.lib.ncsu.edu/chapter/10.1007/978-1-4842-1916-4_7)
+
 ^3^ [JSON Example with Data Types Including JSON Array, on CODEBLOGMONEY.com](https://codeblogmoney.com/json-example-with-data-types-including-json-array/)
+
 ^4^ [Why you should be using JSON vs XML by Vineet Joshi. Posted Jan 18, 2017 from Cloud-Elements](https://blog.cloud-elements.com/using-json-over-xml)
+
 ^5^ [XML vs JSON by Tom Strassner](https://www.cs.tufts.edu/comp/150IDS/final_papers/tstras01.1/FinalReport/FinalReport.html)
 
 
@@ -82,10 +88,12 @@ We have selected to use the County Crime dataset available from [CORGIS Dataset 
 The County Crime dataset originates from the Unified Crime Reporting Statistics coming out of U.S. Justice Department and the Federal Bureau of Investigations. The data include crime rates by county in the United States. The data are broken down into categories which broadly fall under either property or violent crime designations. Data are reported from "city law enforcement agencies 10,000 and over in population and county law enforcement agencies 25,000 and over in population." !https://www.ucrdatatool.gov/faq.cfm Geographic data come from the U.S. Census Bureau.
 
 The data include two character variables:
+
 + Department: the law enforment agency providing the data
 + State: the U.S. state where the department is located.
 
 and 20 numeric variables. The numeric variables are structured as data frames within the larger data set.
+
 + Violent crime rates: in 5 categories
   - All
   - Murder
