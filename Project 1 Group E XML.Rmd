@@ -35,6 +35,8 @@ Essentially XML data is a document that stores data in what is known as an XML t
 
 Example: 
 
+
+```{r exampleXML, echo=TRUE, eval=FALSE}
 <theater>
   <movie category = "Crime">
     <title>Goodfellas</title>
@@ -48,7 +50,9 @@ Example:
   </movie>
 </theater>
 
-In this example <theater> is the root element, <movie> is the child element, and <title>, <director>, and <date> are the sub-child elements. As you can see all elements are enclosed in <> brackets and must be ended with a forward slash </> within the bracket to close the element.  
+```
+
+In this example `<theater>` is the root element, `<movie>` is the child element, and `<title>`, `<director>`, and `<date>` are the sub-child elements. As you can see all elements are enclosed in `<>` brackets and must be ended with a forward slash `</>` within the bracket to close the element.  
 
 ## Where does XML get used?
 
@@ -174,7 +178,7 @@ The boxplot below shows that the Orange species is has a larger body depth than 
 g <- ggplot(crab.table)
 
 #boxplot
-g + geom_boxplot(aes(y = `Body Depth`, fill = Sex)) + facet_grid( ~ Species)
+g + geom_boxplot(aes(y = `Body Depth`, fill = Sex)) + theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) + facet_grid( ~ Species)
 ```
 
 ### Two Variable Plots
