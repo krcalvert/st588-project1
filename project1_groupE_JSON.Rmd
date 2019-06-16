@@ -22,7 +22,7 @@ library(tidyr)
 
 ## What is JSON?
 
-JSON is a data-interchange language. While originally derived from JavaScript, JSON is programming language neutral. It consists of human readable colletions of name/value pairs
+JSON is a data-interchange language. While originally derived from JavaScript, JSON is programming language neutral. It consists of human readable colletions of name/value pairs.
 It is "less verbose" than XML.^2^ Where XML allows for data and metadata and commenting, JSON objects are expressed as name-value pairs. Though this limits the data JSON is able to communicate, it does allow for straigtforward reading of the data by programs like R. 
 
 ## Basic Structure
@@ -45,13 +45,13 @@ Sample Object^3^
 
 ## Why is it good for storing data?
 
-*Speed*
+*Speed*  
 JSON is a pure data format designed for transmission. It is compact; the absence of metadata, schema, or other information make JSON faster to parse compared to XML or other languages because JSON uses less data overall. 
 
-*Readability*
-Requires additional validation as small mistakes in coding commas or parenthes cause issues. Lacks schema. Less flexible, which simplifies code.^1^ 
+*Readability*  
+Requires additional validation as small mistakes in coding commas or parenthes cause issues. Lacks schema. Less flexible, which simplifies code.^1^
 
-*Compatibility*
+*Compatibility*  
 JSON is language neutral. Additionally, it uses conventions familiar to other programming languages. It easily integrated in web resources, especially JavaScript. Many notable public APIs use JSON.^4^ 
 
 ### APIs supporting JSON
@@ -79,14 +79,14 @@ References:
 
 There are three packages for importing JSON data into R: [rjson](https://cran.r-project.org/web/packages/rjson/index.html), [rjsonio](https://cran.r-project.org/web/packages/RJSONIO/index.html), and [jsonite](https://cran.r-project.org/web/packages/jsonlite/index.html).
 
-The packages function similarly; however, there are differences in how the parse the data, indicate missing values, and contain options for controlling how data is presented or simplified. `rjson` has fewer options for the latter. 
+The packages function similarly; however, there are differences in how they parse the data, indicate missing values, and contain options for controlling how data is presented or simplified. `rjson` has fewer options for the latter. 
 
 We have selected `jsonlite` for this project. The data set we will use for the analysis has nested data frames. This package allows us to flatten the data into a non-nested data frame.
 
 
 # CORGIS Crime Dataset
 
-We have selected to use the County Crime dataset available from [CORGIS Dataset Project](https://think.cs.vt.edu/corgis/json/county_crime/county_crime.html). CORGIS is a project out of Virginia Tech to provide clean, simple to use datasets for people learning to code. They provide data across a number of subject areas and in a variety of common data formats. 
+We have elected to use the County Crime dataset available from [CORGIS Dataset Project](https://think.cs.vt.edu/corgis/json/county_crime/county_crime.html). CORGIS is a project out of Virginia Tech to provide clean, simple to use datasets for people learning to code. They provide data across a number of subject areas and in a variety of common data formats. 
 
 The County Crime dataset originates from the Unified Crime Reporting Statistics coming out of U.S. Justice Department and the Federal Bureau of Investigations. The data include crime rates by county in the United States. The data are broken down into categories which broadly fall under either property or violent crime designations. Data are reported from "city law enforcement agencies 10,000 and over in population and county law enforcement agencies 25,000 and over in population." !https://www.ucrdatatool.gov/faq.cfm Geographic data come from the U.S. Census Bureau.
 
@@ -149,11 +149,27 @@ state_totals <- state_totals %>% arrange(desc(state_totals$total_crime))
 state_bar <- ggplot(state_totals, aes(x = reorder(State, -total_crime), y = total_crime))
 state_bar + geom_bar(stat = "Identity", color = "purple") + xlab(element_blank()) + ylab("Total Crimes Reported") + ggtitle("Figure 1. Number of Crimes Reported in Each State, 2010")+ scale_y_continuous(labels = scales::comma) + theme(axis.text.x = element_text(size = 6, angle = 45))
 
-north_carolina_property_crime <- north_carolina_crime %>% select("Department", "Data.Totals.Property.Burglary", "Data.Totals.Property.Larceny", "Data.Totals.Property.Motor","Year")
-north_carolina_property_crime <- north_carolina_property_crime %>% gather(key = type, value = totals, 2:4)
+#It looks like you haven't used a custom function in your project yet.  One good candidate would be to take your code that subsets the data to North Carolina only (in contingencyTables chunk) along with the code that generates the barcharts (in stateCrime chunk) and modify it to be a function that takes as an input the state name and outputs the property crime trend barchart summary for that state.
+statePropertyCrimes <- function(stateName){
+  state_crime <- filter(county_crime, county_crime$State == stateName)
+  
+  state_property_crime <- state_crime %>% select("Department", "Data.Totals.Property.Burglary", "Data.Totals.Property.Larceny", "Data.Totals.Property.Motor","Year")
+  
+  state_property_crime <- state_property_crime %>% gather(key = type, value = totals, 2:4)
 
-bar_plot <- ggplot(subset(north_carolina_property_crime, Year >= 2010 & Year <= 2015), aes(x = type, y = totals, fill = as.factor(Year)))
-bar_plot + stat_summary(fun.y = "sum", geom = "bar", position = "dodge") + scale_x_discrete(labels = c("Burglary","Larceny","Motor")) + xlab("Property Crime Category") + ylab("Totals") +scale_fill_discrete(element_blank()) + ggtitle("Figure 2. Property Crime Rates in North Carolina, 2010-2012")
+  bar_plot <- ggplot(subset(state_property_crime, Year >= 2010 & Year <= 2015), aes(x = type, y = totals, fill = as.factor(Year)))
+  bar_plot + stat_summary(fun.y = "sum", geom = "bar", position = "dodge") +   scale_x_discrete(labels = c("Burglary","Larceny","Motor")) + xlab("Property Crime Category") + ylab("Totals") +scale_fill_discrete(element_blank()) + ggtitle(paste0("Property Crime Rates in ", stateName,", 2010-2012"))
+}
+
+statePropertyCrimes("North Carolina")
+#statePropertyCrimes("California")
+#statePropertyCrimes("Minnesota")
+
+# north_carolina_property_crime <- north_carolina_crime %>% select("Department", "Data.Totals.Property.Burglary", "Data.Totals.Property.Larceny", "Data.Totals.Property.Motor","Year")
+# north_carolina_property_crime <- north_carolina_property_crime %>% gather(key = type, value = totals, 2:4)
+# 
+# bar_plot <- ggplot(subset(north_carolina_property_crime, Year >= 2010 & Year <= 2015), aes(x = type, y = totals, fill = as.factor(Year)))
+# bar_plot + stat_summary(fun.y = "sum", geom = "bar", position = "dodge") + scale_x_discrete(labels = c("Burglary","Larceny","Motor")) + xlab("Property Crime Category") + ylab("Totals") +scale_fill_discrete(element_blank()) + ggtitle("Figure 2. Property Crime Rates in North Carolina, 2010-2012")
 
 ```
 
