@@ -1,6 +1,6 @@
 ---
 title: "Project 1 - Group E - JSON"
-author: "Kristin Calvert and Xingyue Gong"
+author: "Kristin Calvert"
 date: "6/5/2019"
 output: 
   html_document:
@@ -8,9 +8,12 @@ output:
 ---
 
 ```{r setup, include=FALSE, warning=FALSE, message=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 library(jsonlite)
 library(tidyverse)
+library(knitr)
+library(tidyr)
+
 ```
 
 # Project 1 - Group # - JSON
@@ -81,7 +84,7 @@ The packages function similarly; however, there are differences in how the parse
 We have selected `jsonlite` for this project. The data set we will use for the analysis has nested data frames. This package allows us to flatten the data into a non-nested data frame.
 
 
-## CORGIS Crime Dataset
+# CORGIS Crime Dataset
 
 We have selected to use the County Crime dataset available from [CORGIS Dataset Project](https://think.cs.vt.edu/corgis/json/county_crime/county_crime.html). CORGIS is a project out of Virginia Tech to provide clean, simple to use datasets for people learning to code. They provide data across a number of subject areas and in a variety of common data formats. 
 
@@ -110,9 +113,73 @@ and 20 numeric variables. The numeric variables are structured as data frames wi
 + Year: the reporting year for the data
 
 ```{r readDS}
+#Use the flatten option to remove the nested data frames
 county_crime <- fromJSON("https://think.cs.vt.edu/corgis/json/county_crime/county_crime.json", flatten = TRUE)
 
 ```
 
 
 ## Data Analysis
+
+### Contingency Table
+
+The combined crime data includes reports from different law enformement agencies. In North Carolina, the data primarily come from the county sheriffs and municipal police departments. See table below. The "other" category includes municipalities that did not include an agency name and a department of public safety. 
+
+```{r contingencyTables}
+
+#Limit data to NC. Create a new variable that indicate the agency type, based on a basic string search for terms.
+north_carolina_crime <- filter(county_crime, county_crime$State == 'North Carolina')
+north_carolina_crime$Department_Type <-(ifelse(grepl("Police",north_carolina_crime$Department),"Police", ifelse(grepl("Sheriff", north_carolina_crime$Department),"Sheriff","Other")))
+
+table(north_carolina_crime$Department_Type) %>% kable(col.names = c("Agency Type", "Frequency"), caption = "Table 1. Types of Reporting Agencies in North Carolina")
+
+```
+
+### Bar Charts
+
+We can also start with some simple bar charts to get a sense of the data. We can examine which states have the highest numbers of report crimes (see Figure 1). Another simple analysis that can be done with the data is to look at trends over time. We have taken a snippet of data from North Carolina for 2010 - 2012 to get an overview of the change in number of property crimes broken out by type (see Figure 2). The visual inspection of the data may reveal interesting trends we would want to examine in more detail. 
+
+```{r stateCrime}
+
+#Subset data by year = 2010 and get the total number of crimes by state
+state_totals <- county_crime %>% filter(Year == 2010) %>% group_by(State)%>% transmute(total_violent = sum(Data.Totals.Violent.All), total_property = sum(Data.Totals.Property.All), total_crime = (total_violent+total_property)) %>% distinct()
+state_totals <- state_totals %>% arrange(desc(state_totals$total_crime))
+
+#Plot the total number of crimes committed in each state
+state_bar <- ggplot(state_totals, aes(x = reorder(State, -total_crime), y = total_crime))
+state_bar + geom_bar(stat = "Identity", color = "purple") + xlab(element_blank()) + ylab("Total Crimes Reported") + ggtitle("Figure 1. Number of Crimes Reported in Each State, 2010")+ scale_y_continuous(labels = scales::comma) + theme(axis.text.x = element_text(size = 6, angle = 45))
+
+north_carolina_property_crime <- north_carolina_crime %>% select("Department", "Data.Totals.Property.Burglary", "Data.Totals.Property.Larceny", "Data.Totals.Property.Motor","Year")
+north_carolina_property_crime <- north_carolina_property_crime %>% gather(key = type, value = totals, 2:4)
+
+bar_plot <- ggplot(subset(north_carolina_property_crime, Year >= 2010 & Year <= 2015), aes(x = type, y = totals, fill = as.factor(Year)))
+bar_plot + stat_summary(fun.y = "sum", geom = "bar", position = "dodge") + scale_x_discrete(labels = c("Burglary","Larceny","Motor")) + xlab("Property Crime Category") + ylab("Totals") +scale_fill_discrete(element_blank()) + ggtitle("Figure 2. Property Crime Rates in North Carolina, 2010-2012")
+
+```
+
+### Scatter Plots
+
+One area of interest could be examining the differences in crime rates based on the population of the county. We could do analyses to determine if there is a statistically significant correlation between county size and crime rates. We have created a new variable that classifies each county into a size factor. Then we plotted the summary data for each level on the box plot. There are a huge number of outliers that could be worth investigating further. Our population sizes were chosen arbitrarily; a proper analysis would need to include a justification for each group. Even so we see a slight increase in the mean crime rate in larger population centers. 
+
+```{r populationSize}
+#Create a new factor that assigns a size category to each report based on the population of the county. Population figures chosen at arbitrary intervals.
+
+county_crime$county_size <- ifelse(county_crime$Data.Population > 500000, "Very Large", ifelse(county_crime$Data.Population >= 100000, "Large", ifelse(county_crime$Data.Population >= 50000, "Mid-size", ifelse(county_crime$Data.Population >15000, "Small", ifelse(county_crime$Data.Population >0,"Tiny","Missing")))))
+county_crime$county_size <- factor(county_crime$county_size, levels = c("Missing","Tiny","Small","Mid-size","Large","Very Large"))
+
+#Create boxplots for each size. Counties with zero population were excluded.
+box_plot <- ggplot(subset(county_crime, Year == 2010 & county_size != "Missing"))
+box_plot + geom_boxplot(aes(y = Data.Rates.Property.All, fill = county_size)) + ylab("Property Crime Rates") + theme(axis.text.x = element_blank()) + scale_fill_discrete(name = "County Size") + ggtitle("Figure 3. 2010 US Property Crime Rates by County Size")
+
+```
+
+### Scatter
+
+Again, with our interest in population size and crime rate, we have plotted the overall reported rates of violent crime for 2010 for populations greater than zero and less than 2 million. We don't see an obvious relationship, but we could iterate a linear model to the data across years to determine if there could be a relationship.
+
+```{r scatter}
+scatter_plot <- ggplot(subset(county_crime, Year == 2010 & Data.Population > 0 & Data.Population < 2000000))
+scatter_plot + geom_point(aes(x = Data.Population, y = Data.Rates.Violent.All), colour = "red") + ggtitle("2010 US Violent Crime Rates by Population (under 2M)") + ylab("Total Violent Crime Rates") + xlab("Population") + scale_x_continuous(labels = scales::comma)
+
+```
+
