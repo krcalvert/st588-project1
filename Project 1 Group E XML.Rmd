@@ -12,7 +12,7 @@ knitr::opts_chunk$set(echo = FALSE)
 ```
 
 ```{r libraries, message = FALSE, warning = FALSE}
-
+#load required libraries
 library(xml2)
 library(tidyverse)
 library(dplyr)
@@ -90,7 +90,7 @@ The dataset contains eight variables and 200 observations. The variables are spe
 ## Data Table
 
 ```{r datasetTable}
-
+#read in xml file
 xml <- read_xml("http://www.ggobi.org/book/data/australian-crabs.xml")
 
 records <- xml_find_all(xml, "//record")
@@ -99,7 +99,7 @@ text <- xml_text(records)
 text <- str_remove_all(text, "[\n]")
 text <- text[-c(201:208)]
 
-
+#arrange data into table format and convert to data frame
 getTable <- function(x){
 
   split <- strsplit(x[1:200], " ")
@@ -119,12 +119,14 @@ getTable <- function(x){
 
 crabTable <- getTable(text)
 
+#embed HTML table widget of the data
 datatable(crabTable)
 
 ```
 
 ```{r sizeGroups}
 
+#write function to group any numeric vector into "Large" (top quartile), "Medium" (2nd and 3rd quartiles), and "Small" (bottom quartile)
 sizeGroups <- function(x){
   if(!is.vector(x)){
     stop("Please provide vector to classify into groups")
@@ -136,6 +138,7 @@ sizeGroups <- function(x){
   ifelse(x < small, "Small", ifelse((x >= small) & (x <= large), "Medium", "Large"))
 }
 
+#add new grouping variables to data frame
 crabTable <- crabTable %>%
   mutate(FLGroup = sizeGroups(crabTable$`Frontal Lip`),
          RWGroup = sizeGroups(crabTable$`Rear Width`),
@@ -149,7 +152,7 @@ crabTable <- crabTable %>%
 The contingency tables below show that the 200 observations are evenly split between male and female crabs of each species.  Based on body depth measurements, it's reasonable to make a hypothesis that male crabs are larger than female crabs and Orange species crabs are larger than Blue species crabs.  It also seems that the size measurements might be positively correlated, as the table of frontal lip and rear width measurements shows.  These hypothesis could be explored further using graphical techniques and hypothesis testing.
 
 ```{r contingencyTable}
-
+#create contingency tables of interest
 table(crabTable$Sex, crabTable$Species) %>% kable(caption = "Sex and Species of Crabs") %>% kable_styling()
 
 table(crabTable$Sex, crabTable$BDGroup) %>% kable(caption = "The Body Depth of Crabs by Sex") %>% kable_styling()
@@ -167,9 +170,9 @@ table(crabTable$RWGroup, crabTable$FLGroup) %>% kable(caption = "The Frontal Lip
 The barplots below are visual depictions of the first three contingency tables.
 
 ```{r bar}
+#create barplots of interest
 g <- ggplot(crabTable)
 
-#barplot
 g + geom_bar(aes(x = Species, fill = Sex))
 g + geom_bar(aes(x = Sex, fill = BDGroup))
 g + geom_bar(aes(x = Species, fill = BDGroup))
@@ -178,9 +181,9 @@ g + geom_bar(aes(x = Species, fill = BDGroup))
 The boxplot below shows that the Orange species is has a larger body depth than the the Blue species, for both males and females.  This aligns with our original hypothesis from the contingency tables.  However, it appears that male crabs are larger than female crabs for only the Blue species.
 
 ```{r box}
+#create boxplots of interest
 g <- ggplot(crabTable)
 
-#boxplot
 g + geom_boxplot(aes(y = `Body Depth`, fill = Sex)) + theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) + facet_grid( ~ Species)
 ```
 
@@ -189,7 +192,7 @@ g + geom_boxplot(aes(y = `Body Depth`, fill = Sex)) + theme(axis.text.x = elemen
 The scatterplot below shows that carapace width and length have a strong positive correlation, regardless of sex or species.  This aligns with the hypothesis from looking at the contingency tables.
 
 ```{r scatter}
-#scatterplot
+#create scatterplots of interest
 g <- ggplot(crabTable)
 
 g + geom_point(aes(x = `Carapace Width`, y = `Carapace Length`, color = `Sex`)) + 
@@ -208,9 +211,9 @@ From these plots, it appears that the width variables exhibit a bimodal distribu
 
 *Note: these are one-variable plots*  
 ```{r density}
+#densities of width variables
 g <- ggplot(crabTable)
 
-#densities of width variables
 g + geom_density(aes(x = `Rear Width`)) +
   facet_grid(Sex ~ Species)
 ```
