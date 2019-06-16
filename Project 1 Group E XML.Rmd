@@ -117,7 +117,8 @@ getTable <- function(x){
                             "Carapace Width" = X7,
                             "Body Depth" = X8) %>%
     mutate(Species = as.factor(Species), 
-           Sex = as.factor(Sex)) %>% mutate_if(is.character, as.numeric) %>% 
+           Sex = as.factor(Sex)) %>% 
+    mutate_if(is.character, as.numeric) %>% 
     mutate(Species = recode(Species, "0" = "Blue",  "1" = "Orange")) %>% 
     mutate(Sex = recode(Sex, "0" = "Male", "1" = "Female"))
   
@@ -157,17 +158,25 @@ crabTable <- crabTable %>%
 
 ## Contingency Tables
 
-The contingency tables below show that the 200 observations are evenly split between male and female crabs of each species.  Based on body depth measurements, it's reasonable to make a hypothesis that male crabs are larger than female crabs and Orange species crabs are larger than Blue species crabs.  It also seems that the size measurements might be positively correlated, as the table of frontal lip and rear width measurements shows.  These hypothesis could be explored further using graphical techniques and hypothesis testing.
+The contingency tables below show that the 200 observations are evenly split between male and female crabs of each species.  Based on body depth measurements, it's reasonable to make a hypothesis that male crabs are larger than female crabs and Orange species crabs are larger than Blue species crabs.  It also seems that the size measurements might be positively correlated, as the table of frontal lip and rear width measurements shows.  These hypotheses could be explored further using graphical techniques and hypothesis testing.
 
 ```{r contingencyTable}
 #create contingency tables of interest
-table(crabTable$Sex, crabTable$Species) %>% kable(caption = "Sex and Species of Crabs") %>% kable_styling()
+table(crabTable$Sex, crabTable$Species) %>% 
+  kable(caption = "Sex and Species of Crabs") %>% 
+  kable_styling()
 
-table(crabTable$Sex, crabTable$BDGroup) %>% kable(caption = "The Body Depth of Crabs by Sex") %>% kable_styling()
+table(crabTable$Sex, crabTable$BDGroup) %>% 
+  kable(caption = "The Body Depth of Crabs by Sex") %>% 
+  kable_styling()
 
-table(crabTable$Species, crabTable$BDGroup) %>% kable(caption = "The Body Depth of Crabs by Species") %>% kable_styling()
+table(crabTable$Species, crabTable$BDGroup) %>% 
+  kable(caption = "The Body Depth of Crabs by Species") %>% 
+  kable_styling()
 
-table(crabTable$RWGroup, crabTable$FLGroup) %>% kable(caption = "The Frontal Lip of Crabs by Rear Width") %>% kable_styling()
+table(crabTable$RWGroup, crabTable$FLGroup) %>% 
+  kable(caption = "The Frontal Lip of Crabs by Rear Width") %>% 
+  kable_styling()
 
 ```
 
@@ -192,7 +201,9 @@ The boxplot below shows that the Orange species is has a larger body depth than 
 #create boxplots of interest
 g <- ggplot(crabTable)
 
-g + geom_boxplot(aes(y = `Body Depth`, fill = Sex)) + theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) + facet_grid( ~ Species)
+g + geom_boxplot(aes(y = `Body Depth`, fill = Sex)) + 
+  theme(axis.text.x = element_blank(), axis.ticks.x = element_blank()) + 
+  facet_grid( ~ Species)
 ```
 
 ### Two Variable Plots
