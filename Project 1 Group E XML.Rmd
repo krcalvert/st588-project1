@@ -108,10 +108,18 @@ getTable <- function(x){
   
   split.tbl <- tbl_df(split.df)
   
-  a <- split.tbl %>% rename(Species = X1, Sex = X2, Index = X3, "Frontal Lip" = X4,
-                     "Rear Width" = X5, "Carapace Length" = X6, "Carapace Width" = X7,                       "Body Depth" = X8) %>% mutate(Species = as.factor(Species), 
-                     Sex = as.factor(Sex)) %>% mutate_if(is.character, as.numeric) %>%
-                     mutate(Species = recode(Species, "0" = "Blue",  "1" = "Orange")) %>%  mutate(Sex = recode(Sex, "0" = "Male", "1" = "Female"))
+  a <- split.tbl %>% rename(Species = X1,
+                            Sex = X2,
+                            Index = X3,
+                            "Frontal Lip" = X4,
+                            "Rear Width" = X5,
+                            "Carapace Length" = X6,
+                            "Carapace Width" = X7,
+                            "Body Depth" = X8) %>%
+    mutate(Species = as.factor(Species), 
+           Sex = as.factor(Sex)) %>% mutate_if(is.character, as.numeric) %>% 
+    mutate(Species = recode(Species, "0" = "Blue",  "1" = "Orange")) %>% 
+    mutate(Sex = recode(Sex, "0" = "Male", "1" = "Female"))
   
   return(a)
 
